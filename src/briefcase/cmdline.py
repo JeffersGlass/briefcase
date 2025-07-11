@@ -160,8 +160,8 @@ def parse_cmdline(args, console: Console | None = None):
         # Import the platform module
         try:
             platform_module = platforms[platform]
-        except KeyError:
-            raise InvalidPlatformError(platform, platforms.keys())
+        except KeyError as e:
+            raise InvalidPlatformError(platform, platforms.keys()) from e
 
         # If the output format wasn't explicitly specified, check to see
         # Otherwise, extract and use the default output_format for the platform.
@@ -182,16 +182,16 @@ def parse_cmdline(args, console: Console | None = None):
         try:
             format_module = output_formats[output_format]
             Command = getattr(format_module, options.command)
-        except KeyError:
+        except KeyError as e:
             raise InvalidFormatError(
                 requested=output_format,
                 choices=list(output_formats.keys()),
-            )
-        except AttributeError:
+            ) from e
+        except AttributeError as e:
             raise UnsupportedCommandError(
                 platform=platform,
                 output_format=output_format,
                 command=options.command,
-            )
+            ) from e
 
     return Command, extra
