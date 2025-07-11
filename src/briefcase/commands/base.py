@@ -710,20 +710,24 @@ a custom location for Briefcase's tools.
                     if app.sources is not None:
                         # sources is not defined
                         raise BriefcaseConfigError(
-                            f"{app.app_name!r} is declared as an external app, but also "
-                            "defines 'sources'. External apps (apps defining 'external_package_path') "
+                            f"{app.app_name!r} is declared as an external app, "
+                            "but also defines 'sources'."
+                            "External apps (apps defining 'external_package_path') "
                             "cannot define sources."
                         )
                 elif app.sources is None:
                     # Neither sources or package_path is defined
                     raise BriefcaseConfigError(
-                        f"{app.app_name!r} does not define either 'sources' or 'external_package_path'."
+                        f"{app.app_name!r} does not define either 'sources' "
+                        "or 'external_package_path'."
                     )
                 else:
                     # sources is defined, package_path is not
                     if app.external_package_executable_path:
                         raise BriefcaseConfigError(
-                            f"{app.app_name!r} defines 'external_package_executable_path', but not 'external_package_path'."
+                            f"{app.app_name!r} defines "
+                            "'external_package_executable_path', "
+                            "but not 'external_package_path'."
                         )
 
     def verify_app(self, app: AppConfig):
@@ -774,7 +778,8 @@ any compatibility problems, and then add the compatibility declaration.
             )
 
     def verify_required_python(self, app: AppConfig):
-        """Verify that the running version of Python meets the project's specifications."""
+        """Verify that the running version of Python \
+        meets the project's specifications."""
 
         requires_python = getattr(self.global_config, "requires_python", None)
         if not requires_python:
@@ -894,7 +899,8 @@ any compatibility problems, and then add the compatibility declaration.
             "--verbosity",
             action="count",
             default=0,
-            help="Enable verbose logging. Use -vv and -vvv to increase logging verbosity",
+            help="Enable verbose logging. "
+            "Use -vv and -vvv to increase logging verbosity",
         )
         parser.add_argument("-V", "--version", action="version", version=__version__)
         parser.add_argument(
@@ -912,7 +918,8 @@ any compatibility problems, and then add the compatibility declaration.
             "--log",
             action="store_true",
             dest="save_log",
-            help="Save a detailed log to file. By default, this log file is only created for critical errors",
+            help="Save a detailed log to file. "
+            "By default, this log file is only created for critical errors",
         )
 
     def _add_update_options(
@@ -1081,19 +1088,25 @@ Did you run Briefcase in a project directory that contains {filename.name!r}?"""
                         self.tools.shutil.rmtree(cached_template)
                     raise
                 except self.tools.git.exc.GitError as e:
-                    # The clone failed; to make sure the repo is in a clean state, clean up
-                    # any partial remnants of this initial clone.
+                    # The clone failed; to make sure the repo is in a clean state,
+                    # clean up any partial remnants of this initial clone.
                     # If we're getting a GitError, we know the directory must exist.
                     self.tools.shutil.rmtree(cached_template)
                     git_fatal_message = re.findall(r"(?<=fatal: ).*?$", e.stderr, re.S)
                     if git_fatal_message:
-                        # GitError captures stderr with single quotes. Because the regex above
-                        # takes everything after git's "fatal" message, we need to strip that final single quote.
+                        # GitError captures stderr with single quotes.
+                        # Because the regex above takes
+                        # everything after git's "fatal" message,
+                        # we need to strip that final single quote.
                         hint = git_fatal_message[0].rstrip("'").strip()
 
-                        # git is inconsistent with capitalisation of the first word of the message
+                        # git is inconsistent with capitalisation of
+                        # the first word of the message
                         # and about periods at the end of the message.
-                        hint = f"{hint[0].upper()}{hint[1:]}{'' if hint[-1] == '.' else '.'}"
+                        hint = (
+                            f"{hint[0].upper()}{hint[1:]}"
+                            f"{'' if hint[-1] == '.' else '.'}"
+                        )
                     else:
                         hint = (
                             "This may be because your computer is offline, or "
@@ -1149,8 +1162,10 @@ Did you run Briefcase in a project directory that contains {filename.name!r}?"""
                 raise BriefcaseCommandError(
                     "Unable to check out template branch.\n"
                     "\n"
-                    "This may be because your computer is offline, or because the template repository\n"
-                    "is in a weird state. If you have a stable network connection, try deleting:\n"
+                    "This may be because your computer is offline, "
+                    " or because the template repository\n"
+                    "is in a weird state. If you have a stable network connection, "
+                    "try deleting:\n"
                     "\n"
                     f"    {cached_template}\n"
                     "\n"
@@ -1186,9 +1201,11 @@ Did you run Briefcase in a project directory that contains {filename.name!r}?"""
                 no_input=True,
                 output_dir=str(output_path),
                 checkout=branch,
-                # Use a copy to prevent changes propagating among tests while test suite is running
+                # Use a copy to prevent changes propagating among tests
+                # while test suite is running
                 extra_context=extra_context.copy(),
-                # Store replay data in the Briefcase template cache instead of ~/.cookiecutter_replay
+                # Store replay data in the Briefcase template cache
+                # instead of ~/.cookiecutter_replay
                 default_config={"replay_dir": str(self.template_cache_path(".replay"))},
             )
         except subprocess.CalledProcessError as e:
@@ -1222,7 +1239,8 @@ Did you run Briefcase in a project directory that contains {filename.name!r}?"""
 
         extra_context = extra_context.copy()
         # Additional context that can be used for the Briefcase template pyproject.toml
-        # header to include the version of Briefcase as well as the source of the template.
+        # header to include the version of Briefcase
+        # as well as the source of the template.
         extra_context.update(
             {
                 "template_source": template,
@@ -1250,7 +1268,8 @@ Did you run Briefcase in a project directory that contains {filename.name!r}?"""
 
             # Development branches can use the main template.
             self.console.info(
-                f"Template branch {template_branch} not found; falling back to development template"
+                f"Template branch {template_branch} not found; "
+                "falling back to development template"
             )
 
             extra_context["template_branch"] = "main"
