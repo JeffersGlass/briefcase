@@ -95,7 +95,7 @@ dependencies = [
     "tomli_w >= 1.0, < 2.0",
 ]
 
-[project.optional-dependencies]
+[dependency-groups]
 # Extras used by developers *of* briefcase are pinned to specific versions to
 # ensure environment consistency.
 dev = [
@@ -229,6 +229,11 @@ no-cover-if-gte-py310 = "sys_version_info > (3, 10) and os_environ.get('COVERAGE
 testpaths = ["tests"]
 filterwarnings = [
     "error",
+]
+
+[tool.tox.env_run_base]
+dependency_groups = [
+  "dev",
 ]
 
 # need to ensure build directories aren't excluded from recursion
